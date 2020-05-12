@@ -38,7 +38,7 @@ metadata:
   name: hello
 spec:
   rules:
-    - host: '*.mymicrosaving.com'
+    - host: '*'
       http:
         paths:
           - backend:

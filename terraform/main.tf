@@ -1,6 +1,9 @@
 provider "aws" {
+  version = "~> 2.61" 
   region     = "eu-west-1"
 }
+
+
 
 # Will we store our state in S3, and lock with dynamodb
 # terraform {

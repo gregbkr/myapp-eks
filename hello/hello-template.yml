@@ -38,7 +38,7 @@ metadata:
   name: hello-$IMAGE_TAG
 spec:
   rules:
-    - host: hello-$IMAGE_TAG.satoshi.tech
+    - host: hello-$IMAGE_TAG.d3vblog.com
       http:
         paths:
           - backend:

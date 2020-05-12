@@ -1,50 +1,68 @@
-# ECS demo
+# MyApp: HA container in EKS (AWS managed kubernetes)
 
-- **Description**: Deploy an app in EKS (kubernetes containers)
-- **Why**: for app that can run in container
-- **Network access**: Application Load-balancer (ALB)
-- **CICD**: codepipeline code injection in github
-- **Elasticity**: EKS
-- **Update infra**: auto for master, manual for worker
-- **Deploy infra**: GUI for now
-- **The app**: a simple hello world: https://github.com/gregbkr/hello
+## Overview
+This setup will deploy a redundant helloworld container on ECS fargate, with automatic CI/CD from AWS.
+
+More info: you can find an overview of that setup on my [blog](https://greg.satoshi.tech/ecs)
+
+### Infra
+![Infra](./.github/images/myapp-ecs-infra.png)
+
+- Cloud: AWS
+- [EKS](https://aws.amazon.com/eks): managed Kubernetes container orchestrator (on 2 availability zones for redundancy)
+- [ECR](https://aws.amazon.com/ecr): container registry to store hello image
+- App: a simple hello world in nodejs (folder `hello`)
+- Code source: github
+- Deployment: [Terraform](https://www.terraform.io/) describes all components to be deployed. One command line will setup the infra
+- CI/CD: [Codepipeline](https://aws.amazon.com/codepipeline) to buid and deploy the orchestrator EKS, the pipeline
+
+
+### CI/CD flow diagram
+
+![CI/CD](./.github/images/myapp-ecs-cicd.png)
+
+A simple `git push` from a developer in Github will launch the whole CI/CD process. Docker image will build and containers in EKS will be updated to run that new image without any downtime.
 
 # Deploy
 
-## Setup EKS
-- Create an EKS with: 
+### Prerequisites
+Please setup on your laptop:
+- AWS cli and AWS account to deploy in `eu-west-1`
+- Docker and Compose
+- Github personal token with `admin:repo_hook, repo` rights from [here](https://github.com/settings/tokens)
+
+### Test app on your laptop
+Check the app locally:
 ```
-export TAG=hello-terra-gg <-- choose a unique prefix
-
-eksctl create cluster \
---name $TAG \
---version 1.14 \
---nodegroup-name standard-workers \
---node-type t2.medium \
---nodes 2 \
---nodes-min 2 \
---nodes-max 3 \
---node-ami auto
+cd hello
+docker-compose up -d
+curl localhost 8080
 ```
-- To scale up the node: `eksctl scale nodegroup --cluster hello-terra-bkr --name standard-workers --nodes 4`
 
-## Check EKS
-- Setup your kubeconfig: `aws eks --region eu-west-1 update-kubeconfig --name hello1`
-- Test: `kubectl get svc`
-- Deploy hello app: `kubectl apply -f hello/hello.yml`
-- Test the app by curling the public DNS `EXTERNAL-IP:PORT` listed here: `kubectl get svc`
-- Curl: `curl acc43f4be4e5311eab2ed0e7ccd0f45b-1073317507.eu-west-3.elb.amazonaws.com:8080`
-- Delete deploy: `kubectl delete -f hello/hello.yml`
-
-## CICD
-- Edit your [buildspec](https://github.com/gregbkr/hello/hello-template.yml) variable 
-- Deploy CodeBuild and CodePipeline: 
+## Deploy to AWS
+- Set a unique project prefix and your github token:
 ```
 cd terraform
-export GITHUBTOKEN=[your_token_here]'
+export TAG=hello-protos   <-- please change to your prefix!
+export GITHUBTOKEN=xxxx   <-- You token here
+nano buildspec-eks.yml    <-- edit build vars
+```
+- Deploy EKS and CodePipeline: 
+```
+terraform init
 terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
 ```
 
+## Check EKS
+- Cd `cd ..`
+- Setup your kubeconfig: `aws eks --region eu-west-1 update-kubeconfig --name $TAG`
+- Test: `kubectl get svc`
+- Deploy hello app (using dockerhub hello image): `kubectl apply -f hello/hello.yml` 
+- Test the app by curling the public DNS `EXTERNAL-IP:PORT` listed here: `kubectl get all`
+- Curl: `curl acc43f4be4e5311eab2ed0e7ccd0f45b-1073317507.eu-west-3.elb.amazonaws.com:8080`
+- Delete deploy: `kubectl delete -f hello/hello.yml`
+
+## CI/CD
 - For CodeBuild IAM role to be able to deploy to EKS, you need to add a permission in EKS as described [here](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)
 - Backup the configmap first: `kubectl get -o yaml -n kube-system configmap/aws-auth > aws-auth.yml`
 - Edit it: `kubectl edit -n kube-system configmap/aws-auth`
@@ -56,7 +74,7 @@ terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
         - system:masters
 ```
 
-- Find the urls of the services: `kubectl get svc`
+- Try a new build. If sucessful: `kubectl get svc`
 ```
 kubectl get svc
 NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                               PORT(S)          AGE
@@ -79,3 +97,19 @@ Hello world *PROD* v3.2 from server: hello-prod-5ff4c8b79f-hfbrh%
 - Only 1 Loadbalancer
 - Env var for branch
 - Blue green
+
+# Annexes
+
+- Deploy with eksctl:
+```
+eksctl create cluster \
+--name $TAG \
+--version 1.14 \
+--nodegroup-name standard-workers \
+--node-type t2.medium \
+--nodes 2 \
+--nodes-min 2 \
+--nodes-max 3 \
+--node-ami auto
+```
+- To scale up the node: `eksctl scale nodegroup --cluster hello-terra-bkr --name standard-workers --nodes 4`
