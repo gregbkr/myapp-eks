@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_ACCOUNT_ID: 391378411314 
-    IMAGE_REPO_NAME: myapp-eks
+    IMAGE_REPO_NAME: hello-protos
     EKS_CLUSTER: hello-protos
 
 phases: 

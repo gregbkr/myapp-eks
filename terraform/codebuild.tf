@@ -28,7 +28,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "role_policy" {
-  role = "${aws_iam_role.build_role.name}"
+  role = aws_iam_role.build_role.name
 
   policy = <<POLICY
 {
@@ -102,7 +102,7 @@ resource "aws_codebuild_project" "codebuild" {
   name          = "${var.tag}-prod"
   description   = "master env"
   build_timeout = "5"
-  service_role  = "${aws_iam_role.build_role.arn}"
+  service_role  = aws_iam_role.build_role.arn
 
   artifacts {
     type = "CODEPIPELINE"
@@ -110,7 +110,7 @@ resource "aws_codebuild_project" "codebuild" {
 
   cache {
     type     = "S3"
-    location = "${aws_s3_bucket.build.bucket}"
+    location = aws_s3_bucket.build.bucket
   }
 
   environment {
@@ -126,7 +126,7 @@ resource "aws_codebuild_project" "codebuild" {
     }
     environment_variable {
       name  = "IMAGE"
-      value = "${aws_ecr_repository.ecr.repository_url}"
+      value = aws_ecr_repository.ecr.repository_url
     }
   }
 
@@ -152,7 +152,7 @@ resource "aws_codebuild_project" "codebuild_dev" {
   name          = "${var.tag}-dev"
   description   = "Dev env"
   build_timeout = "5"
-  service_role  = "${aws_iam_role.build_role.arn}"
+  service_role  = aws_iam_role.build_role.arn
 
   artifacts {
     type = "CODEPIPELINE"
@@ -160,7 +160,7 @@ resource "aws_codebuild_project" "codebuild_dev" {
 
   cache {
     type     = "S3"
-    location = "${aws_s3_bucket.build.bucket}"
+    location = aws_s3_bucket.build.bucket
   }
 
   environment {
@@ -176,7 +176,7 @@ resource "aws_codebuild_project" "codebuild_dev" {
     }  
     environment_variable {
       name  = "IMAGE"
-      value = "${aws_ecr_repository.ecr.repository_url}"
+      value = aws_ecr_repository.ecr.repository_url
       
     }
   }

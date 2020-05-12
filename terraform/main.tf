@@ -3,8 +3,6 @@ provider "aws" {
   region     = "eu-west-1"
 }
 
-
-
 # Will we store our state in S3, and lock with dynamodb
 # terraform {
 #   backend "s3" {
@@ -27,7 +25,7 @@ variable "owner" {
   default = "gregbkr"
 } 
 variable "repo" {
-  default = "eks-terraform-codepipeline"
+  default = "myapp-eks"
 }
 variable "gitHubToken" {
   default = "to-set-via-env-variable"
@@ -43,10 +41,21 @@ data "aws_subnet_ids" "default" {
   vpc_id = "${data.aws_vpc.default.id}"
 }
 
-output "iam_build_role_arn" {
-  value = aws_iam_role.build_role.arn
-}
+# OUTPUTS
 
-output "subnets" {
-  value = data.aws_subnet_ids.default
-}
+# output "default_vpc_id" {
+#   value = "${data.aws_vpc.default.id}"
+# }
+
+# output "default_subnet_ids" {
+#   value = ["${data.aws_subnet_ids.default.ids}"]
+# }
+
+# output "ecr_hello_container_registry" {
+#   value = "${aws_ecr_repository.ecr.repository_url}"
+# }
+
+
+# output "iam_build_role_arn" {
+#   value = aws_iam_role.build_role.arn
+# }

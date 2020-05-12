@@ -24,7 +24,7 @@ EOF
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
   name = "${var.tag}-codepipeline_policy"
-  role = "${aws_iam_role.codepipeline_role.id}"
+  role = aws_iam_role.codepipeline_role.id
 
   policy = <<EOF
 {
@@ -99,10 +99,10 @@ EOF
 
 resource "aws_codepipeline" "codepipeline" {
   name     = "${var.tag}-prod"
-  role_arn = "${aws_iam_role.codepipeline_role.arn}"
+  role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = "${aws_s3_bucket.codepipeline_bucket.bucket}"
+    location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
   }
 
@@ -139,7 +139,7 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = "${aws_codebuild_project.codebuild.name}"
+        ProjectName = aws_codebuild_project.codebuild.name
       }
     }
   }
@@ -147,10 +147,10 @@ resource "aws_codepipeline" "codepipeline" {
   
 resource "aws_codepipeline" "codepipeline_dev" {
   name     = "${var.tag}-dev"
-  role_arn = "${aws_iam_role.codepipeline_role.arn}"
+  role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = "${aws_s3_bucket.codepipeline_bucket.bucket}"
+    location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
   }
 
@@ -187,7 +187,7 @@ resource "aws_codepipeline" "codepipeline_dev" {
       version          = "1"
 
       configuration = {
-        ProjectName = "${aws_codebuild_project.codebuild_dev.name}"
+        ProjectName = aws_codebuild_project.codebuild_dev.name
       }
     }
   }
