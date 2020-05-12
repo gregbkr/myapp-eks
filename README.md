@@ -23,7 +23,7 @@ More info: you can find an overview of that setup on my [blog](https://greg.sato
 
 A simple `git push` from a developer in Github will launch the whole CI/CD process. Docker image will build and containers in EKS will be updated to run that new image without any downtime.
 
-# Deploy
+## Deploy
 
 ### Prerequisites
 Please setup on your laptop:
@@ -39,7 +39,7 @@ docker-compose up -d
 curl localhost 8080
 ```
 
-## Deploy to AWS
+### Deploy to AWS
 - Set a unique project prefix and your github token:
 ```
 cd terraform
@@ -53,7 +53,7 @@ terraform init
 terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
 ```
 
-## Check EKS
+### Check EKS
 - Cd `cd ..`
 - Setup your kubeconfig: `aws eks --region eu-west-1 update-kubeconfig --name $TAG`
 - Test: `kubectl get svc`
@@ -62,7 +62,7 @@ terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
 - Curl: `curl acc43f4be4e5311eab2ed0e7ccd0f45b-1073317507.eu-west-3.elb.amazonaws.com:8080`
 - Delete deploy: `kubectl delete -f hello/hello.yml`
 
-## CI/CD
+### CI/CD
 - For CodeBuild IAM role to be able to deploy to EKS, you need to add a permission in EKS as described [here](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)
 - Backup the configmap first: `kubectl get -o yaml -n kube-system configmap/aws-auth > aws-auth.yml`
 - Edit it: `kubectl edit -n kube-system configmap/aws-auth`
@@ -89,16 +89,16 @@ curl ac36f17644f3911ea9cc00e382602d1a-391888307.eu-west-3.elb.amazonaws.com:8080
 Hello world *PROD* v3.2 from server: hello-prod-5ff4c8b79f-hfbrh%
 ```
 
-# Destroy all
-- Delete the EKS cluster (carefull, ALL will be deleted): `eksctl delete cluster $TAG`
+### Destroy all
+To delete EKS, CodeBuild, CodePipeline (carefull, ALL will be deleted)
+```
+aws s3 rb s3://${TAG}-codebuild --force
+aws s3 rb s3://${TAG}-codepipeline --force
+cd terraform
+terraform destroy
+```
 
-# Todo
-
-- Only 1 Loadbalancer
-- Env var for branch
-- Blue green
-
-# Annexes
+## Annexes
 
 - Deploy with eksctl:
 ```

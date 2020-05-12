@@ -40,7 +40,7 @@ phases:
       - printf '[{"name":"hello","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
       - kubectl get pod
       - echo $IMAGE $IMAGE_TAG
-      - envsubst < hello-template.yml | kubectl apply -f -
+      - envsubst < hello/hello-template.yml | kubectl apply -f -
       - kubectl rollout restart deploy/hello-$IMAGE_TAG
       - kubectl get all
 artifacts:
