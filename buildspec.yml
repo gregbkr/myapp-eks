@@ -45,4 +45,3 @@ phases:
       - kubectl get all
 artifacts:
     files: imagedefinitions.json
-    
