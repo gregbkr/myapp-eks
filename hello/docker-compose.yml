@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  helloworld:
+    image: hello
+    build: .
+    container_name: hello
+    ports:
+      - "8080:8080"
+

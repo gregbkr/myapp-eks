@@ -1,0 +1,48 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: 391378411314 
+    IMAGE_REPO_NAME: hello-terra-bkr
+    EKS_CLUSTER: hello-terra-bkr
+
+phases: 
+  install: 
+    runtime-versions: 
+      docker: 18 
+  pre_build: 
+    commands: 
+      - env
+      - echo $IMAGE_TAG $AWS_DEFAULT_REGION
+      - echo Logging in to Amazon ECR... 
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION) 
+      - echo Setup kubectl
+      - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+      - kubectl version --client
+      - echo Getting kubeconfig info to connect to Amazon EKS... 
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER
+      - kubectl version
+      - kubectl get svc
+  build: 
+    commands: 
+      - echo Build started on `date` 
+      - echo Building the Docker image...           
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG hello
+      - echo docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG   
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG       
+  post_build: 
+    commands: 
+      - echo Build completed on `date` 
+      - echo Pushing the Docker image... 
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - printf '[{"name":"hello","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+      - kubectl get pod
+      - echo $IMAGE $IMAGE_TAG
+      - envsubst < hello-template.yml | kubectl apply -f -
+      - kubectl rollout restart deploy/hello-$IMAGE_TAG
+      - kubectl get all
+artifacts:
+    files: imagedefinitions.json
+    
