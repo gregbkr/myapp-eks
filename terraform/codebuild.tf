@@ -194,6 +194,5 @@ resource "aws_codebuild_project" "codebuild_dev" {
 
   source {
     type            = "CODEPIPELINE"
-    buildspec       = "buildspec-eks.yml"
   }
 }

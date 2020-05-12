@@ -73,8 +73,8 @@ terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
       groups:
         - system:masters
 ```
-
-- Try a new build. If sucessful: `kubectl get svc`
+- You can push code in the `master` and 'dev' branch which will trigger `prod` and `dev` pipelines.
+- After a successful build: `kubectl get svc`
 ```
 kubectl get svc
 NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                               PORT(S)          AGE
