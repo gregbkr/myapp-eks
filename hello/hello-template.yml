@@ -30,7 +30,7 @@ spec:
     app: hello
   ports:
     - port: 8080
-  type: LoadBalancer
+  #type: LoadBalancer
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress

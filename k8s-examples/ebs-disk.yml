@@ -1,3 +1,8 @@
+# Create an EBS volume and reference the volumeID below
+# Run the container with: kubectl apply -f ebs-disk.yml
+# Check logs: kubectl logs busybox-69cffb969f-zc6vm
+# Then delete the container or the deploy
+# Reapply the manisfest, you should see that the file time.log did persist.
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -40,8 +45,8 @@ spec:
         image: busybox
         command: ["/bin/sh", "-c"]
         args:
-          - ls -la /ebs
-            echo %date% >> /ebs/time.log;
+          - ls -la /ebs;
+            echo `date` >> /ebs/time.log;
             cat /ebs/time.log;
         volumeMounts:
         - mountPath: "/ebs"

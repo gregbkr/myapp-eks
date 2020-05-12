@@ -30,7 +30,7 @@ spec:
     app: hello
   ports:
     - port: 8080
-  type: LoadBalancer
+  #type: LoadBalancer
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -38,7 +38,7 @@ metadata:
   name: hello
 spec:
   rules:
-    - host: '*'
+    - host: '*.satoshi.tech'
       http:
         paths:
           - backend:

@@ -1,9 +1,9 @@
 # MyApp: HA container in EKS (AWS managed kubernetes)
 
 ## Overview
-This setup will deploy a redundant helloworld container on ECS fargate, with automatic CI/CD from AWS.
+This setup will deploy a redundant helloworld container on EKS, with automatic CI/CD from AWS.
 
-More info: you can find an overview of that setup on my [blog](https://greg.satoshi.tech/ecs)
+More info: you can find an overview of that setup on my [blog](https://greg.satoshi.tech/eks)
 
 ### Infra
 ![Infra](./.github/images/myapp-ecs-infra.png)
@@ -74,19 +74,22 @@ terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
         - system:masters
 ```
 - You can push code in the `master` and 'dev' branch which will trigger `prod` and `dev` pipelines.
-- After a successful build: `kubectl get svc`
+- After a successful build, check k8s services and pods: `kubectl get all`
+
+### Deploy a unique Loadbalancer
+- Because we don't want each service `hello-dev` & `hello-prod` to deploy each a external loadbalancer, we will use a unique `ingress-nginx` controller. This [ingress-controller](https://kubernetes.github.io/ingress-nginx/deploy/#aws) will create an AWS [NLB](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html) and link created ingress definitions
 ```
-kubectl get svc
-NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                               PORT(S)          AGE
-hello-dev    LoadBalancer   10.100.60.248   ad0039cfa4f3911ea9cc00e382602d1a-1499677234.eu-west-3.elb.amazonaws.com   8080:31028/TCP   25m
-hello-prod   LoadBalancer   10.100.137.92   ac36f17644f3911ea9cc00e382602d1a-391888307.eu-west-3.elb.amazonaws.com    8080:31017/TCP   25m
-kubernetes   ClusterIP      10.100.0.1      <none>                                                                    443/TCP          4h37m
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/aws/deploy.yaml
+kubectl -n ingress-nginx get svc    <-- external DNS
+kubectl get ingress
+```
+- Check your service using `curl` and `header` to target dev or prod: 
+```
+curl -H 'Host: hello-dev.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.eu-west-1.amazonaws.com
+Hello world *DEV* v3.6 from server: hello-dev-5c97c6dd6c-pqw9s%
 
-curl ad0039cfa4f3911ea9cc00e382602d1a-1499677234.eu-west-3.elb.amazonaws.com:8080
-Hello world *DEV* v3.5 from server: hello-dev-5cff8d7f5-fcmch
-
-curl ac36f17644f3911ea9cc00e382602d1a-391888307.eu-west-3.elb.amazonaws.com:8080
-Hello world *PROD* v3.2 from server: hello-prod-5ff4c8b79f-hfbrh%
+curl -H 'Host: hello-prod.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.eu-west-1.amazonaws.com
+Hello world *PROD* v3.6 from server: hello-prod-d7566b444-4m97r%
 ```
 
 ### Destroy all
