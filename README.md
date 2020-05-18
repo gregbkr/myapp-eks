@@ -13,9 +13,9 @@ More info: you can find an overview of that setup on my [blog](https://greg.sato
 - [EKS](https://aws.amazon.com/eks): managed Kubernetes container orchestrator (on 3 availability zones for redundancy)
 - [ECR](https://aws.amazon.com/ecr): container registry to store hello image
 - App: a simple hello world in nodejs (folder `hello`)
-- Code source: github
+- Code source: Github
 - Deployment: [Terraform](https://www.terraform.io/) describes all components to be deployed. One command line will setup the infra
-- CI/CD: [Codepipeline](https://aws.amazon.com/codepipeline) to buid and deploy the app in EKS
+- CI/CD: [Codepipeline](https://aws.amazon.com/codepipeline) to build and deploy the app in EKS
 
 
 ### CI/CD flow diagram
