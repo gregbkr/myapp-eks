@@ -10,7 +10,7 @@ More info: you can find an overview of that setup on my [blog](https://greg.sato
 ![Infra](./.github/images/myapp-eks-infra.png)
 
 - Cloud: AWS
-- [EKS](https://aws.amazon.com/eks): managed Kubernetes container orchestrator (on 2 availability zones for redundancy)
+- [EKS](https://aws.amazon.com/eks): managed Kubernetes container orchestrator (on 3 availability zones for redundancy)
 - [ECR](https://aws.amazon.com/ecr): container registry to store hello image
 - App: a simple hello world in nodejs (folder `hello`)
 - Code source: github
