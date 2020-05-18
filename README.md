@@ -1,12 +1,13 @@
 # MyApp: HA container in EKS (AWS managed kubernetes)
 
 ## Overview
-This setup will deploy a redundant helloworld container on EKS, with automatic CI/CD from AWS.
+
+This setup will deploy an EKS cluster in AWS, using CloudFormation. In this cluster, we will deploy a simple helloworld container, with automatic CI/CD from AWS PipeLine.
 
 More info: you can find an overview of that setup on my [blog](https://greg.satoshi.tech/eks)
 
 ### Infra
-![Infra](./.github/images/myapp-ecs-infra.png)
+![Infra](./.github/images/myapp-eks-infra.png)
 
 - Cloud: AWS
 - [EKS](https://aws.amazon.com/eks): managed Kubernetes container orchestrator (on 2 availability zones for redundancy)
@@ -14,12 +15,12 @@ More info: you can find an overview of that setup on my [blog](https://greg.sato
 - App: a simple hello world in nodejs (folder `hello`)
 - Code source: github
 - Deployment: [Terraform](https://www.terraform.io/) describes all components to be deployed. One command line will setup the infra
-- CI/CD: [Codepipeline](https://aws.amazon.com/codepipeline) to buid and deploy the orchestrator EKS, the pipeline
+- CI/CD: [Codepipeline](https://aws.amazon.com/codepipeline) to buid and deploy the app in EKS
 
 
 ### CI/CD flow diagram
 
-![CI/CD](./.github/images/myapp-ecs-cicd.png)
+![CI/CD](./.github/images/myapp-eks-cicd.png)
 
 A simple `git push` from a developer in Github will launch the whole CI/CD process. Docker image will build and containers in EKS will be updated to run that new image without any downtime.
 
