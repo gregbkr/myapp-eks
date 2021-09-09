@@ -4,18 +4,17 @@ data:
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::391378411314:role/hello-protos-eks-node-group-role
+      rolearn: arn:aws:iam::126120422206:role/hello-cody-eks-node-group-role
       username: system:node:{{EC2PrivateDNSName}}
   mapUsers: |
-    - userarn: arn:aws:iam::391378411314:role/hello-protos-build-role
+    - userarn: arn:aws:iam::126120422206:role/hello-cody-build-role
       username: codebuild
       groups:
         - system:masters
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2020-05-12T13:15:29Z"
+  creationTimestamp: "2021-09-09T03:56:49Z"
   name: aws-auth
   namespace: kube-system
-  resourceVersion: "2687"
-  selfLink: /api/v1/namespaces/kube-system/configmaps/aws-auth
-  uid: 01826a53-188c-4495-b3f7-8d04a099bcdd
+  resourceVersion: "8217"
+  uid: c3d22dfe-210f-472e-9b13-1fd7d27760bd
