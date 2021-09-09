@@ -28,7 +28,7 @@ A simple `git push` from a developer in Github will launch the whole CI/CD proce
 
 ### Prerequisites
 Please setup on your laptop:
-- AWS cli and AWS account to deploy in `eu-west-1`
+- AWS cli and AWS account to deploy in `us-west-1`
 - Docker and Compose
 - Github personal token with `admin:repo_hook, repo` rights from [here](https://github.com/settings/tokens)
 
@@ -56,11 +56,11 @@ terraform apply -var gitHubToken=$GITHUBTOKEN -var tag=$TAG
 
 ### Check EKS
 - Cd `cd ..`
-- Setup your kubeconfig: `aws eks --region eu-west-1 update-kubeconfig --name $TAG`
+- Setup your kubeconfig: `aws eks --region us-west-1 update-kubeconfig --name $TAG`
 - Test: `kubectl get svc`
 - Deploy hello app (using dockerhub hello image): `kubectl apply -f hello/hello.yml` 
 - Test the app by curling the public DNS `EXTERNAL-IP:PORT` listed here: `kubectl get all`
-- Curl: `curl acc43f4be4e5311eab2ed0e7ccd0f45b-1073317507.eu-west-3.elb.amazonaws.com:8080`
+- Curl: `curl acc43f4be4e5311eab2ed0e7ccd0f45b-1073317507.us-west-3.elb.amazonaws.com:8080`
 - Delete deploy: `kubectl delete -f hello/hello.yml`
 
 ### CI/CD
@@ -86,10 +86,10 @@ kubectl get ingress
 ```
 - Check your service using `curl` and `header` to target dev or prod: 
 ```
-curl -H 'Host: hello-dev.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.eu-west-1.amazonaws.com
+curl -H 'Host: hello-dev.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.us-west-1.amazonaws.com
 Hello world *DEV* v3.6 from server: hello-dev-5c97c6dd6c-pqw9s%
 
-curl -H 'Host: hello-prod.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.eu-west-1.amazonaws.com
+curl -H 'Host: hello-prod.d3vblog.com' ad96829dca62446fd8a14ab27eeb8bd7-e6993d978b08b7c1.elb.us-west-1.amazonaws.com
 Hello world *PROD* v3.6 from server: hello-prod-d7566b444-4m97r%
 ```
 

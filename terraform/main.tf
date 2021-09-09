@@ -1,6 +1,6 @@
 provider "aws" {
   version = "~> 2.61" 
-  region     = "eu-west-1"
+  region     = "us-west-1"
 }
 
 # Will we store our state in S3, and lock with dynamodb
@@ -9,7 +9,7 @@ provider "aws" {
 #     # Replace this with your bucket name!
 #     bucket         = "terraform-up-and-running-state-gg"
 #     key            = "covid/prod/terraform.tfstate"
-#     region         = "eu-west-3"
+#     region         = "us-west-3"
 #     # Replace this with your DynamoDB table name!
 #     dynamodb_table = "terraform-up-and-running-locks"
 #     encrypt        = true
