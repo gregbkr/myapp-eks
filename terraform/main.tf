@@ -22,7 +22,7 @@ variable "tag" {
   default = "hello-terra-bkr"
 }
 variable "owner" {
-  default = "gregbkr"
+  default = "arthur-cloudlem"
 } 
 variable "repo" {
   default = "myapp-eks"
